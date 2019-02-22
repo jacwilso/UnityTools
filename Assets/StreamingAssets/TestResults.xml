@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2019-02-19 01:23:12Z" end-time="2019-02-19 01:23:13Z" duration="0.1925875">
+  <test-suite type="TestSuite" id="1011" name="QuickFind" fullname="QuickFind" runstate="Runnable" testcasecount="3" result="Passed" start-time="2019-02-19 01:23:12Z" end-time="2019-02-19 01:23:13Z" duration="0.192588" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties />
+    <test-suite type="Assembly" id="1015" name="Tests.dll" fullname="C:/Users/j.wilson3355/Documents/Unity/QuickFind/Library/ScriptAssemblies/Tests.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.130826" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18476" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+      </properties>
+      <test-suite type="TestSuite" id="1016" name="Tests" fullname="Tests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.120160" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestFixture" id="1012" name="BenchmarkGetAllAssetPaths" fullname="Tests.BenchmarkGetAllAssetPaths" classname="Tests.BenchmarkGetAllAssetPaths" runstate="Runnable" testcasecount="2" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.105298" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1014" name="NewList_Performance" fullname="Tests.BenchmarkGetAllAssetPaths.NewList_Performance" methodname="NewList_Performance" classname="Tests.BenchmarkGetAllAssetPaths" runstate="Runnable" seed="469629927" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.076779" asserts="0">
+            <properties />
+            <output><![CDATA[Time Millisecond Median:0.00 Min:0.00 Max:0.00 Avg:0.00 Std:0.00 Zeroes:0 SampleCount: 7 Sum: 0.01
+
+##performancetestresult:{"TestName":"Tests.BenchmarkGetAllAssetPaths.NewList_Performance","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1550539393047.0586,"EndTime":1550539393106.0222,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[0.000719754199963063,0.000791729602497071,0.000719754199963063,0.000791729602497071,0.000935680465772748,0.000791729602497071,0.000791729602497071],"Min":0.000719754199963063,"Max":0.000935680465772748,"Median":0.000791729602497071,"Average":0.0007917296108124512,"StandardDeviation":0.0000666362923184797,"PercentileValue":0.0,"Sum":0.005542107275687158,"Zeroes":0,"SampleCount":7}]}
+]]></output>
+          </test-case>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,11 @@
+UnityEngine.GameObject
+UnityEngine.Texture2D
+UnityEngine.Material
+UnityEngine.Shader
+UnityEngine.GUISkin
+UnityEngine.AnimationClip
+UnityEngine.TextAsset
+UnityEngine.Font
+UnityEngine.StyleSheets.StyleSheet
+UnityEngine.Experimental.UIElements.VisualTreeAsset
+UnityEngine.Cubemap

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c364e2d92b0f87449fa8e75c10e0b5c, type: 3}
+  m_Name: ProjectTODO
+  m_EditorClassIdentifier: 
+  todo: 'x Benchmark test GetAllAssetPaths
+
+    - Benchmark test LoadMainAsset
+
+    - Static the window
+
+    - Categories (implement dictionary mapping file endings - json file? setings mapping?)
+
+    x Labels/Tags
+
+    - Custom functions/commands
+
+    - TrieTree integration
+
+    - Dictionary Add already contains string
+
+    - History
+
+    - AssetDatabase.OpenAsset()
+
+    - Clamp searchField (rename to selectedResult)
+
+    - Search outside project (Add to settings)
+
+    - Convert result labels to buttons with label style
+
+    - Break editor window into utility file
+
+    - Search field focus
+
+    - Cache gui styles
+
+    - File extension search
+
+    - Hierarchy search
+
+    - Different actions
+
+    - Autocomplete search
+
+    - Drag objects into scene'
