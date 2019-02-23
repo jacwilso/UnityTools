@@ -19,8 +19,8 @@ namespace QuickFind.Editor {
         private int selectedResult = -1;
         private Vector2 matchingScroll;
 
-        private static bool initialize;
         private Texture2D searchIcon, cancelIcon;
+        private float iconSize = 40;
 
         public class Styles {
             public readonly GUIStyle searchFieldBg = new GUIStyle (GUI.skin.textField);
@@ -77,19 +77,11 @@ namespace QuickFind.Editor {
             window.ShowPopup ();
         }
 
-        [MenuItem ("QuickFind/Init %c")]
-        private static void Init () {
-
-        }
-
         private void Awake () {
             QuickFindCache.Awake ();
         }
 
         private void OnEnable () {
-            if (!initialize) { // todo get rid
-                Init ();
-            }
             matching = new List<Searchable.ISearchable> ();
 
             // icon = EditorGUIUtility.Load ("d_viewtoolzoom.png") as Texture2D;
@@ -131,7 +123,13 @@ namespace QuickFind.Editor {
 
             SearchFieldGUI ();
             HandleSearchFieldCursor ();
+
+            EditorGUILayout.BeginHorizontal ();
+            EditorGUILayout.BeginVertical ();
+            EditorGUILayout.EndVertical ();
+
             MatchingScrollGUI ();
+            EditorGUILayout.EndHorizontal ();
 
             if (Event.current.type != EventType.Repaint && Event.current.type != EventType.Layout) {
                 if (string.IsNullOrEmpty (searchField)) {
@@ -213,6 +211,8 @@ namespace QuickFind.Editor {
                     foreach (var item in menuItems) {
                         matching.Add (new Searchable.MenuItemCommand (item.Key, item.Value));
                     }
+
+                    selectedResult = matching.Count > 0 ? 0 : -1;
                 }
                 rect.x += rect.width;
                 rect.width = cancelIcon.width;
@@ -251,6 +251,11 @@ namespace QuickFind.Editor {
                         selectedResult = -1;
                     }
                     // TODO Move the scroll position
+                    var scrollTo = (selectedResult + 1) * iconSize; // TODO 40f should be icon height
+                    var scrollHeight = position.height - m_styles.searchFieldHeight;
+                    if (matchingScroll.y > scrollTo || (matchingScroll.y + scrollHeight) < scrollTo) {
+                        matchingScroll.y = scrollTo - iconSize;
+                    }
                 }
                 // Event.current.Use ();
             } else if (Event.current.keyCode == KeyCode.Tab || Event.current.character == '\t') {
@@ -262,7 +267,7 @@ namespace QuickFind.Editor {
         }
 
         private void MatchingScrollGUI () {
-            matchingScroll = EditorGUILayout.BeginScrollView (matchingScroll, GUILayout.Width (0.5f * position.width));
+            matchingScroll = EditorGUILayout.BeginScrollView (matchingScroll, GUILayout.Width (0.65f * position.width));
             int len = matching.Count;
             for (int i = 0; i < len; i++) {
                 MatchingItem (matching[i], selectedResult == i, i);
@@ -282,6 +287,7 @@ namespace QuickFind.Editor {
             // GUILayout.Label (content);
             // }
             // EditorGUIUtility.TrIconContent ("Tooolbar Minus");
+            GUILayout.Label (item.Icon, GUILayout.Width (iconSize), GUILayout.Height (iconSize));
             EditorGUILayout.BeginVertical ();
             GUILayout.Label (item.Command, m_styles.resultCommand);
             GUILayout.Label (item.Description, m_styles.resultDescription);

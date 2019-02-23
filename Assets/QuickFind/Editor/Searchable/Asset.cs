@@ -1,27 +1,44 @@
 using UnityEditor;
+using UnityEngine;
 
 namespace QuickFind.Editor.Searchable {
     public class Asset : ISearchable {
         private string path;
-        private string type;
+        private System.Type type;
+        // private Object mainAsset;
 
         public string Command => path;
 
-        public string Description => type;
+        private string displayName;
+        public string DisplayName => displayName;
 
-        public string IconPath => path;
+        public string Description => type.Name;
+
+        private Texture icon;
+        public Texture Icon {
+            get {
+                if (icon == null) {
+                    // icon = AssetPreview.GetMiniTypeThumbnail (type);
+
+                    // mainAsset = AssetDatabase.LoadMainAssetAtPath (path);
+                    // icon = AssetPreview.GetMiniThumbnail (mainAsset);
+                    icon = AssetDatabase.GetCachedIcon (path);
+
+                }
+                return icon;
+            }
+        }
 
         public Asset (string p) {
             path = p;
-            type = AssetDatabase.GetMainAssetTypeAtPath (path).Name;
+            displayName = p.Substring (p.LastIndexOf ('/') + 1);
+            type = AssetDatabase.GetMainAssetTypeAtPath (path);
         }
 
         public void Execute () {
-            var assetType = AssetDatabase.GetMainAssetTypeAtPath (path);
-            UnityEngine.Debug.Log (type);
             var mainAsset = AssetDatabase.LoadMainAssetAtPath (path);
             EditorGUIUtility.PingObject (mainAsset);
-            // UnityEngine.Event.current.Use ();
+            AssetDatabase.OpenAsset (mainAsset);
         }
     }
 }

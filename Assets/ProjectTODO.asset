@@ -52,4 +52,6 @@ MonoBehaviour:
 
     - Autocomplete search
 
-    - Drag objects into scene'
+    - Drag objects into scene
+
+    - Have last command in field (maybe?) (fullyselected)'

@@ -5,11 +5,20 @@ namespace QuickFind.Editor.Searchable {
         private string command;
         public string Command => command;
 
+        public string DisplayName => command;
+
         private string description = string.Empty;
         public string Description => description;
 
-        private string iconPath = string.Empty;
-        public string IconPath => iconPath;
+        private UnityEngine.Texture icon;
+        public UnityEngine.Texture Icon {
+            get {
+                if (icon == null) {
+                    icon = UnityEditor.EditorGUIUtility.IconContent ("UnityLogo.png").image;
+                }
+                return icon;
+            }
+        }
 
         private MethodInfo methodInfo;
 
@@ -18,11 +27,12 @@ namespace QuickFind.Editor.Searchable {
             int to = c.IndexOfAny (new char[] { '#', '%', '&' });
             if (to == -1) {
                 command = c.Substring (from);
-                description = "No shortcut";
+                // description = "No shortcut";
             } else {
                 command = c.Substring (from, to - from - 1);
-                description = "Shortcut: " + c.Substring (to);
+                // description = "Shortcut: " + c.Substring (to);
             }
+            description = c;
             methodInfo = m;
         }
 
@@ -40,6 +50,7 @@ namespace QuickFind.Editor.Searchable {
                 //     //ASSET STORE
                 // }
             } catch (System.Exception e) {
+                UnityEngine.Debug.LogWarning ("Error");
                 UnityEngine.Debug.LogWarning (e.Message);
             }
         }
