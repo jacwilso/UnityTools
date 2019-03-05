@@ -7,35 +7,47 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace QuickFind.Editor {
-    public class QuickFindEditor : EditorWindow {
+    public class QuickFindWindow : EditorWindow {
         // private static TrieNode root = new TrieNode ();
 
         private string searchField;
         private bool searchWantsFocus;
         private int controlId;
         private int prevCursorPos = 0, prevSelectCursorPos = 0;
+        private bool expandWindow;
 
         private List<Searchable.ISearchable> matching;
+        // private Stack<List<Searchable.ISearchable>> matchStack;
         private int selectedResult = -1;
         private Vector2 matchingScroll;
 
-        private Texture2D searchIcon, cancelIcon;
-        private float iconSize = 40;
+        private Action<string> OnSearch;
+
+        private static QuickFind.Settings.QuickFindSettings settings;
 
         public class Styles {
             public readonly GUIStyle searchFieldBg = new GUIStyle (GUI.skin.textField);
             public readonly GUIStyle searchFieldOverlay = new GUIStyle (GUIStyle.none);
             public readonly float searchFieldHeight;
+            public readonly GUIContent searchIcon = EditorGUIUtility.IconContent ("LookDevEnvRotation@2x");
 
             public readonly GUIStyle resultRowDefault = new GUIStyle (GUIStyle.none);
             public readonly GUIStyle resultRowSelected = new GUIStyle (GUIStyle.none);
             public readonly GUIStyle resultCommand = new GUIStyle (GUI.skin.label);
             public readonly GUIStyle resultDescription = new GUIStyle (GUI.skin.label);
 
+            public readonly GUIStyle iconBtn = new GUIStyle (EditorStyles.boldLabel);
+            public readonly GUIContent favoriteIcon = EditorGUIUtility.IconContent ("Favorite Icon");
+            public readonly GUIContent historyIcon = EditorGUIUtility.IconContent ("UnityEditor.AnimationWindow"); // TODO better icon
+
             private readonly Color resultSelected = new Color32 (61, 128, 223, 230);
             private int searchFontSize = 30;
             private int resultCommandSize = 15;
             private int resultDescriptionSize = 10; // TODO customizable?
+
+            private readonly Color iconBtnClick = new Color32 (40, 40, 40, 80);
+            private int iconBtnFontSize = 12;
+            public readonly float iconSize = 40;
 
             public Styles () {
                 searchFieldBg.fontSize = searchFontSize;
@@ -44,15 +56,25 @@ namespace QuickFind.Editor {
 
                 resultCommand.fontSize = resultCommandSize;
                 resultDescription.fontSize = resultDescriptionSize;
+                resultRowSelected.normal.background = GenerateTex (resultSelected);
 
+                iconBtn.fontSize = iconBtnFontSize;
+                iconBtn.alignment = TextAnchor.MiddleLeft;
+                iconBtn.active.background = GenerateTex (iconBtnClick);
+
+                favoriteIcon.text = "Favorites";
+                historyIcon.text = "History";
+            }
+
+            private Texture2D GenerateTex (Color c) {
                 var tex = new Texture2D (1, 1);
                 for (int y = 0; y < 1; y++) {
                     for (int x = 0; x < 1; x++) {
-                        tex.SetPixel (x, y, resultSelected);
+                        tex.SetPixel (x, y, c);
                     }
                 }
                 tex.Apply ();
-                resultRowSelected.normal.background = tex;
+                return tex;
             }
         }
         private static Styles s_styles = null;
@@ -65,10 +87,15 @@ namespace QuickFind.Editor {
             }
         }
 
-        [MenuItem ("QuickFind/QuickFind %g")]
-        private static void ShowWindow () {
-            var window = ScriptableObject.CreateInstance (typeof (QuickFindEditor)) as QuickFindEditor;
-            window.maxSize = new Vector2 (600f, 200f);
+        [MenuItem ("QuickFind/QuickFind")]
+        internal static void ShowWindow () {
+            var window = ScriptableObject.CreateInstance (typeof (QuickFindWindow)) as QuickFindWindow;
+            if (settings == null) {
+                settings = QuickFind.Settings.QuickFindSettings.GetOrCreateSettings ();
+            }
+
+            window.maxSize = new Vector2 (600f, m_styles.searchFieldHeight + m_styles.iconSize * settings.Window.ExpandedRows); // TODO fix (this is too small)
+            window.minSize = new Vector2 (600f, m_styles.searchFieldHeight);
             window.CenterOnApplicationWindow (window.maxSize);
             var winRect = window.position;
             winRect.height = m_styles.searchFieldHeight;
@@ -77,62 +104,44 @@ namespace QuickFind.Editor {
             window.ShowPopup ();
         }
 
-        private void Awake () {
-            QuickFindCache.Awake ();
-        }
-
         private void OnEnable () {
             matching = new List<Searchable.ISearchable> ();
-
-            // icon = EditorGUIUtility.Load ("d_viewtoolzoom.png") as Texture2D;
-            searchIcon = EditorGUIUtility.Load ("lookdevenvrotation.png") as Texture2D;
-            // icon = EditorGUIUtility.Load ("tab_next.png") as Texture2D;
-            // icon = EditorGUIUtility.Load ("aboutwindow.mainheader") as Texture2D;
-            // icon = Resources.Load<Texture2D> ("search_icon");
-
-            cancelIcon = EditorGUIUtility.Load ("icons/lookdevclose.png") as Texture2D;
-            //ViewToolZoom
-            //winbtn_win_close
-            //WaitSpin00
-
+            // matchStack = new Stack<List<Searchable.ISearchable>> ();
             searchWantsFocus = true;
+            OnSearch = DefaultSearch;
         }
 
         private void OnDisable () {
-            // GUIUtility.keyboardControl = -1;
-        }
-
-        private void OnFocus () { }
-
-        private void OnLostFocus () {
-            this.Close ();
             matching.Clear ();
             searchField = string.Empty;
             matchingScroll = Vector2.zero;
         }
 
+        private void OnFocus () { }
+
+        private void OnLostFocus () {
+            Close ();
+        }
+
         private void OnDestroy () { }
 
         private void OnGUI () {
-            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape) {
-                this.Close ();
-                matching.Clear ();
-                searchField = string.Empty;
-                matchingScroll = Vector2.zero;
-            }
+            HandleInputEvents ();
 
             SearchFieldGUI ();
             HandleSearchFieldCursor ();
 
             EditorGUILayout.BeginHorizontal ();
             EditorGUILayout.BeginVertical ();
+            IconButtonGUI ();
             EditorGUILayout.EndVertical ();
 
             MatchingScrollGUI ();
             EditorGUILayout.EndHorizontal ();
 
             if (Event.current.type != EventType.Repaint && Event.current.type != EventType.Layout) {
-                if (string.IsNullOrEmpty (searchField)) {
+                if (!expandWindow && string.IsNullOrEmpty (searchField)) {
+                    matching.Clear ();
                     var winRect = position;
                     winRect.height = m_styles.searchFieldHeight;
                     position = winRect;
@@ -151,77 +160,66 @@ namespace QuickFind.Editor {
             searchRect.xMin += m_styles.searchFieldBg.padding.left;
             searchRect.xMax -= m_styles.searchFieldBg.padding.right; {
                 GUI.BeginGroup (searchRect);
-                // Search Icon
-                var rect = searchRect;
-                rect.position = Vector2.zero;
-                rect.width = searchIcon.width;
-                GUI.DrawTexture (rect, searchIcon, ScaleMode.ScaleToFit, true);
+                var rect = new Rect (0, 0.3f * m_styles.searchIcon.image.height, m_styles.searchIcon.image.width, searchRect.height);
+                EditorGUIUtility.AddCursorRect (rect, MouseCursor.Link);
+                if (GUI.Button (rect, m_styles.searchIcon, GUIStyle.none)) {
+                    expandWindow = !expandWindow;
+                }
 
                 // Search Field
                 rect.x += rect.width + m_styles.searchFieldBg.padding.right;
-                rect.width = searchRect.width - searchIcon.width - cancelIcon.width - m_styles.searchFieldBg.padding.horizontal;
+                rect.y = searchRect.y - 1;
+                rect.width = searchRect.width - rect.width - m_styles.searchFieldBg.padding.horizontal;
+                EditorGUI.BeginChangeCheck ();
                 controlId = GUIUtility.GetControlID (FocusType.Keyboard) + 1;
                 var prevSearch = searchField;
                 searchField = GUI.TextField (rect, searchField, m_styles.searchFieldOverlay);
-
-                if (!string.IsNullOrEmpty (searchField) && !searchField.Equals (prevSearch)) {
-                    var matchString = searchField;
+                if (EditorGUI.EndChangeCheck () &&
+                    Event.current.keyCode != KeyCode.DownArrow &&
+                    Event.current.keyCode != KeyCode.UpArrow) {
+                    string matchString = searchField;
                     selectedResult = -1;
                     matching.Clear ();
-                    var assetPaths = QuickFindCache.AssetPaths;
 
-                    int colonIndex = matchString.IndexOf (':');
-                    int len = matchString.Length - 1;
-                    List<Func<string, bool>> filterFuncs = new List<Func<string, bool>> ();
-                    while (colonIndex > 0 && colonIndex < len) {
-                        char filterType = matchString[colonIndex - 1];
-                        var filterEnd = matchString.IndexOf (' ', colonIndex);
-                        string filter;
-                        if (filterEnd == -1) {
-                            filter = matchString.Substring (colonIndex + 1);
-                            matchString = matchString.Remove (colonIndex - 1, matchString.Length - (colonIndex - 1));
-                        } else {
-                            filter = matchString.Substring (colonIndex + 1, filterEnd - (colonIndex + 1));
-                            matchString = matchString.Remove (colonIndex - 1, filterEnd + 1);
-                        }
-                        if (string.IsNullOrEmpty (filter)) {
-                            continue;
-                        }
-                        filterFuncs.Add (QuickFindUtility.Filter (filterType, filter));
-
-                        colonIndex = matchString.IndexOf (':');
-                    }
-
-                    assetPaths = assetPaths
-                        .Where (x => {
-                            bool include = x.Contains (matchString, StringComparison.OrdinalIgnoreCase);
-                            int i = 0;
-                            int filterLen = filterFuncs.Count;
-                            while (include && i < filterLen) {
-                                include = filterFuncs[i++] (x);
-                            }
-                            return include;
-                        });
-                    foreach (var path in assetPaths) {
-                        matching.Add (new Searchable.Asset (path));
-                    }
-
-                    var menuItems = QuickFindCache.MenuItems
-                        .Where (x => x.Key.Contains (searchField, StringComparison.OrdinalIgnoreCase));
-                    foreach (var item in menuItems) {
-                        matching.Add (new Searchable.MenuItemCommand (item.Key, item.Value));
-                    }
-
+                    OnSearch (matchString);
                     selectedResult = matching.Count > 0 ? 0 : -1;
                 }
-                rect.x += rect.width;
-                rect.width = cancelIcon.width;
-                GUI.DrawTexture (rect, cancelIcon, ScaleMode.ScaleToFit, true);
                 GUI.EndGroup ();
 
                 if (searchWantsFocus) {
                     GUIUtility.keyboardControl = controlId;
                     EditorGUIUtility.editingTextField = true;
+                    Focus ();
+                }
+            }
+        }
+
+        private void HandleInputEvents () {
+            if (Event.current.type == EventType.KeyDown) {
+                if (Event.current.keyCode == KeyCode.Escape) {
+                    Close ();
+                } else if (Event.current.modifiers == settings.OpenShortcut.Modifiers &&
+                    Event.current.keyCode == settings.OpenShortcut.Key) {
+                    expandWindow = !expandWindow;
+                    matching.Clear ();
+                    OnSearch = DefaultSearch;
+                    Event.current.Use ();
+                } else if (Event.current.modifiers == settings.HistoryShortcut.Modifiers &&
+                    Event.current.keyCode == settings.HistoryShortcut.Key) {
+                    HistoryMode ();
+                    Event.current.Use ();
+                    // } else if (Event.current.keyCode == KeyCode.Backspace) {
+                    //     matchStack.Pop ();
+                }
+            } else if (Event.current.type == EventType.ValidateCommand && (Event.current.commandName == "Paste" || Event.current.commandName == "Copy")) { // TODO maybe copy copies row info?
+                Event.current.Use ();
+            } else if (Event.current.type == EventType.ExecuteCommand) {
+                if (Event.current.commandName == "Paste") {
+                    searchField = EditorGUIUtility.systemCopyBuffer;
+                    // matchStack.Clear ();
+                    // TODO do new matches populate
+                } else if (Event.current.commandName == "Copy") {
+                    EditorGUIUtility.systemCopyBuffer = searchField;
                 }
             }
         }
@@ -234,7 +232,6 @@ namespace QuickFind.Editor {
                 textEd = (TextEditor) GUIUtility.GetStateObject (typeof (TextEditor), GUIUtility.keyboardControl);
                 if (textEd != null) {
                     textEd.SelectNone ();
-                    // textEd.MoveTextEnd ();
                 }
             }
             if (textEd != null) {
@@ -243,66 +240,151 @@ namespace QuickFind.Editor {
             }
 
             if (Event.current.keyCode == KeyCode.DownArrow || Event.current.keyCode == KeyCode.UpArrow) {
-                // textEd.SelectAll ();
                 textEd.MoveTextEnd ();
                 if (Event.current.type == EventType.Used) {
                     selectedResult += 2 * (Event.current.keyCode - KeyCode.UpArrow) - 1;
-                    if (selectedResult < 0) {
-                        selectedResult = -1;
-                    }
-                    // TODO Move the scroll position
-                    var scrollTo = (selectedResult + 1) * iconSize; // TODO 40f should be icon height
-                    var scrollHeight = position.height - m_styles.searchFieldHeight;
-                    if (matchingScroll.y > scrollTo || (matchingScroll.y + scrollHeight) < scrollTo) {
-                        matchingScroll.y = scrollTo - iconSize;
-                    }
+                    CycleHighlightedResult ();
                 }
-                // Event.current.Use ();
-            } else if (Event.current.keyCode == KeyCode.Tab || Event.current.character == '\t') {
+            } else if (Event.current.keyCode == KeyCode.Tab) {
                 searchWantsFocus = true;
+                if (Event.current.type == EventType.KeyDown) {
+                    if (Event.current.modifiers == EventModifiers.None) {
+                        selectedResult++;
+                    } else if (Event.current.modifiers == EventModifiers.Shift) {
+                        selectedResult--;
+                    }
+                    CycleHighlightedResult ();
+                }
                 Event.current.Use ();
             } else if (selectedResult != -1 && Event.current.keyCode == KeyCode.Return) {
-                matching[selectedResult].Execute ();
+                ExecuteResult ();
             }
         }
 
+        private void IconButtonGUI () {
+            if (GUILayout.Button (m_styles.favoriteIcon, m_styles.iconBtn, GUILayout.Height (18f))) {
+                Debug.Log ("Nothing implemented for favorites. Open to suggestions.");
+            }
+            if (GUILayout.Button (m_styles.historyIcon, m_styles.iconBtn, GUILayout.Height (18f))) {
+                HistoryMode ();
+            }
+
+            // Maybe open settings/preferences
+            // var asm = Assembly.GetAssembly(typeof(EditorWindow));
+            // var T=asm.GetType("UnityEditor.PreferencesWindow");
+            // var M=T.GetMethod("ShowPreferencesWindow", BindingFlags.NonPublic|BindingFlags.Static);
+            // M.Invoke(null, null);
+        }
+
         private void MatchingScrollGUI () {
-            matchingScroll = EditorGUILayout.BeginScrollView (matchingScroll, GUILayout.Width (0.65f * position.width));
+            matchingScroll = EditorGUILayout.BeginScrollView (matchingScroll, GUILayout.Width (0.8f * position.width));
             int len = matching.Count;
+            len = Mathf.Min (10, len);
             for (int i = 0; i < len; i++) {
                 MatchingItem (matching[i], selectedResult == i, i);
             }
             EditorGUILayout.EndScrollView ();
         }
 
+        private void CycleHighlightedResult () {
+            selectedResult = Mathf.Clamp (selectedResult, -1, matching.Count - 1);
+            // TODO Move the scroll position
+            var scrollTo = (selectedResult + 1) * m_styles.iconSize;
+            var scrollHeight = position.height - m_styles.searchFieldHeight;
+            if (matchingScroll.y > scrollTo || (matchingScroll.y + scrollHeight) < scrollTo) {
+                matchingScroll.y = scrollTo - m_styles.iconSize;
+            }
+        }
+
         private void MatchingItem (Searchable.ISearchable item, bool selected, int i) {
+            if (item == null) {
+                // Debug.Log ("NULL"); // TODO figure out why sometimes null, might be b/c parallelized
+                return;
+            }
             if (selected) {
                 EditorGUILayout.BeginHorizontal (m_styles.resultRowSelected);
             } else {
                 EditorGUILayout.BeginHorizontal (m_styles.resultRowDefault); // TODO GUIStyle.none doesn't work for some reason??
             }
-            // if (i < 3) { // figure out only on screen
-            // GUIContent content = EditorGUIUtility.ObjectContent (AssetDatabase.LoadMainAssetAtPath (matching[i]), AssetDatabase.GetMainAssetTypeAtPath (matching[i])); // TODO Cache?
-            // var content = AssetPreview.GetMiniTypeThumbnail (AssetDatabase.GetMainAssetTypeAtPath (matching[i]));
-            // GUILayout.Label (content);
-            // }
-            // EditorGUIUtility.TrIconContent ("Tooolbar Minus");
-            GUILayout.Label (item.Icon, GUILayout.Width (iconSize), GUILayout.Height (iconSize));
+            GUILayout.Label (item.Icon, GUILayout.Width (m_styles.iconSize), GUILayout.Height (m_styles.iconSize));
             EditorGUILayout.BeginVertical ();
-            GUILayout.Label (item.Command, m_styles.resultCommand);
+            GUILayout.Label (item.DisplayName, m_styles.resultCommand);
             GUILayout.Label (item.Description, m_styles.resultDescription);
             EditorGUILayout.EndVertical ();
             EditorGUILayout.EndHorizontal ();
 
             var labelRect = GUILayoutUtility.GetLastRect ();
-            if (Event.current.type == EventType.MouseDown && labelRect.Contains (Event.current.mousePosition)) {
-                if (selected || Event.current.clickCount == 2) {
+            if (labelRect.Contains (Event.current.mousePosition)) {
+                if (Event.current.type == EventType.MouseDown) {
                     selectedResult = i;
-                    item.Execute ();
-                } else {
-                    selectedResult = i;
+                    if (Event.current.clickCount == 2) {
+                        ExecuteResult ();
+                    }
+                    Event.current.Use ();
                 }
-                Event.current.Use ();
+
+                if (item is Searchable.Asset) { // TODO dont love this being here
+                    var asset = item as Searchable.Asset;
+                    var mainAsset = asset.GetMainAsset ();
+                    if (mainAsset is MonoScript) {
+                        var isClass = (mainAsset as MonoScript).GetClass ();
+                        if (isClass == null || isClass.IsSubclassOf (typeof (MonoBehaviour))) {
+                            return;
+                        }
+                    }
+
+                    EditorGUIUtility.AddCursorRect (labelRect, MouseCursor.Link);
+                    if (Event.current.type == EventType.MouseDrag) {
+                        DragAndDrop.PrepareStartDrag ();
+                        DragAndDrop.objectReferences = new UnityEngine.Object[] {
+                            asset.GetMainAsset ()
+                        };
+                        DragAndDrop.StartDrag ("QuickFind::Asset Drag");
+                        Event.current.Use ();
+                    }
+                }
+            }
+        }
+
+        private void ExecuteResult () {
+            matching[selectedResult].Execute ();
+            QuickFindCache.history.Add (matching[selectedResult]);
+            Close ();
+        }
+
+        private void DefaultSearch (string matchString) {
+            // if (matchStack.Count > 0) {
+            //     matching = new List<Searchable.ISearchable> (matchStack.Peek ().Count); // TODO is this worth putting here?
+            //     QuickFindUtility.SearchISearchable (matching, matchStack.Peek (), matchString);
+            // } else {
+            //     matchStack.Push (matching);
+            QuickFindUtility.SearchAssets (matching, matchString);
+            if (!matchString.Contains (':')) {
+                QuickFindUtility.SearchMenuItems (matching, matchString);
+                QuickFindUtility.SearchGameObjects (matching, matchString);
+            }
+            // }
+        }
+
+        private void HistoryMode () {
+            OnSearch = HistorySearch;
+            matching.Clear ();
+            HistorySearch (searchField);
+            expandWindow = true;
+        }
+
+        private void HistorySearch (string matchString) { // TODO parallelize
+            Debug.Log (QuickFindCache.history.Count);
+            if (string.IsNullOrEmpty (matchString)) {
+                matching = new List<Searchable.ISearchable> (QuickFindCache.history);
+            } else {
+                matching.Capacity = QuickFindCache.history.Count;
+                System.Threading.Tasks.Parallel.ForEach (QuickFindCache.history, (item) => {
+                    Debug.Log (item.Command);
+                    if (item.Command.Contains (matchString, StringComparison.OrdinalIgnoreCase)) {
+                        matching.Add (item);
+                    }
+                });
             }
         }
     }

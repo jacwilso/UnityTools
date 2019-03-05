@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+#if UNITY_2018_3_OR_NEWER
 using UnityEditor;
 using UnityEngine;
 // using UnityEditor.Experimental.UIElements;
@@ -14,116 +12,24 @@ namespace QuickFind.Settings {
         public QuickFindSettingsProvider (string path, SettingsScope scope) : base (path, scope) { }
 
         public static bool IsSettingsAvailable () {
-            return File.Exists (QuickFindSettings.k_SettingsPath);
+            return System.IO.File.Exists (QuickFindSettings.k_SettingsPath);
         }
 
-        private static bool keySelect = false;
         [SettingsProvider]
         public static SettingsProvider CreateSettingsProvider () {
-            var provider = new SettingsProvider ("Preferences/Plugins/Quick Find Settings", SettingsScope.User) {
+            var provider = new SettingsProvider ("Preferences/Quick Find Settings", SettingsScope.User) {
                 guiHandler = (searchContext) => {
-                        var settings = QuickFindSettings.GetSerializedSettings ();
-
-                        // Key Shortcuts
-                        {
-                            var keyProp = settings.FindProperty ("m_openKey");
-                            var modProp = settings.FindProperty ("m_openModifier");
-                            var key = (KeyCode) keyProp.intValue;
-                            var modKeys = (EventModifiers) modProp.intValue;
-                            StringBuilder openKeyCombo = null;
-                            if (key != 0) {
-                                openKeyCombo = new StringBuilder (key.ToString ());
-                            }
-
-                            bool alt = modKeys.HasFlag (EventModifiers.Alt);
-                            if (alt) {
-                                openKeyCombo?.Insert (0, "Alt + ");
-                            }
-                            bool shift = modKeys.HasFlag (EventModifiers.Shift);
-                            if (shift) {
-                                openKeyCombo?.Insert (0, "Shift + ");
-                            }
-#if UNITY_EDITOR_OSX
-                            bool control = modKeys.HasFlag (EventModifiers.Command);
-                            if (control) {
-                                openKeyCombo?.Insert (0, "Command + ");
-                            }
-#else
-                            bool control = modKeys.HasFlag (EventModifiers.Control);
-                            if (control) {
-                                openKeyCombo?.Insert (0, "Ctrl + ");
-                            }
-#endif
-
-                            EditorGUILayout.LabelField ("Open Shortcut", EditorStyles.boldLabel);
-                            EditorGUILayout.BeginHorizontal ();
-                            EditorGUILayout.LabelField ("Key:");
-                            if (GUILayout.Button (keySelect? "[Enter a key]": openKeyCombo == null? "None": openKeyCombo.ToString (), GUI.skin.textField)) {
-                                keySelect = true;
-                            }
-                            if (GUILayout.Button ("Clear") || (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)) {
-                                keySelect = false;
-                                Debug.Log (key);
-                                keyProp.intValue = 0;
-                            }
-                            EditorGUILayout.EndHorizontal ();
-
-                            EditorGUILayout.BeginHorizontal ();
-                            EditorGUILayout.LabelField ("Modifiers:");
-                            EditorGUILayout.BeginVertical ();
-#if UNITY_EDITOR_OSX
-                            EditorGUI.BeginChangeCheck ();
-                            control = EditorGUILayout.Toggle ("Command", control);
-                            if (EditorGUI.EndChangeCheck ()) {
-                                modKeys ^= EventModifiers.Command;
-                            }
-#else
-                            EditorGUI.BeginChangeCheck ();
-                            control = EditorGUILayout.Toggle ("Control", control);
-                            if (EditorGUI.EndChangeCheck ()) {
-                                modKeys ^= EventModifiers.Control;
-                            }
-#endif
-                            EditorGUI.BeginChangeCheck ();
-                            shift = EditorGUILayout.Toggle ("Shift", shift);
-                            if (EditorGUI.EndChangeCheck ()) {
-                                modKeys ^= EventModifiers.Shift;
-                            }
-
-                            EditorGUI.BeginChangeCheck ();
-                            alt = EditorGUILayout.Toggle ("Alt", alt);
-                            if (EditorGUI.EndChangeCheck ()) {
-                                modKeys ^= EventModifiers.Alt;
-                            }
-
-                            modProp.intValue = (int) modKeys;
-                            EditorGUILayout.EndVertical ();
-                            EditorGUILayout.EndHorizontal ();
-
-                            if (keySelect && Event.current.type == EventType.KeyDown) {
-                                keySelect = false;
-                                keyProp.intValue = (int) Event.current.keyCode;
-                                Debug.Log (Event.current.keyCode + " " + keyProp.intValue);
-                                modProp.intValue = (int) Event.current.modifiers;
-                                Event.current.Use ();
-                            }
-                        }
-
-                        {
-                            EditorGUILayout.PropertyField (settings.FindProperty ("m_typeFilterStartsWith"));
-                            EditorGUILayout.PropertyField (settings.FindProperty ("m_includeProjectFiles"));
-                        }
-
-                        settings.ApplyModifiedProperties ();
+                        QuickFindPreferences.PreferncesGUI ();
                     },
 
                     // Populate the search keywords to enable smart search filtering and label highlighting:
-                    keywords = new HashSet<string> (new [] { "open", "open window" })
+                    keywords = new System.Collections.Generic.HashSet<string> (new [] { "open", "open window" }) // TODO finish
             };
 
             return provider;
         }
 
+        /// USING EXPERIMENTAL API
         // class Styles {
         //     public static GUIContent openWindow = new GUIContent ("Open Window");
         // }
@@ -205,3 +111,4 @@ namespace QuickFind.Settings {
         // }
     }
 }
+#endif

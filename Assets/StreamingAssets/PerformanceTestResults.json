@@ -51,17 +51,17 @@
         "ScriptingRuntimeVersion": ""
     },
     "TestSuite": "",
-    "StartTime": 1550539393047.0586,
-    "EndTime": 1550539393047.0586,
+    "StartTime": 1551050938892.278,
+    "EndTime": 1551050938892.278,
     "Results": [
         {
-            "TestName": "Tests.BenchmarkGetAllAssetPaths.NewList_Performance",
+            "TestName": "Tests.BenchmarkISearchableQuery.LinearForEach",
             "TestCategories": [
                 "Uncategorized"
             ],
             "TestVersion": "1",
-            "StartTime": 1550539393047.0586,
-            "EndTime": 1550539393106.0222,
+            "StartTime": 1551050938312.1016,
+            "EndTime": 1551050938445.4893,
             "SampleGroups": [
                 {
                     "Definition": {
@@ -74,21 +74,181 @@
                         "FailOnBaseline": true
                     },
                     "Samples": [
-                        0.000719754199963063,
-                        0.000791729602497071,
-                        0.000719754199963063,
-                        0.000791729602497071,
-                        0.000935680465772748,
-                        0.000791729602497071,
-                        0.000791729602497071
+                        13.265132904052737,
+                        13.386249542236329,
+                        13.61989974975586,
+                        13.235092163085938,
+                        13.20505142211914,
+                        13.18025588989258,
+                        13.165950775146485
                     ],
-                    "Min": 0.000719754199963063,
-                    "Max": 0.000935680465772748,
-                    "Median": 0.000791729602497071,
-                    "Average": 0.0007917296108124512,
-                    "StandardDeviation": 0.0000666362923184797,
+                    "Min": 13.165950775146485,
+                    "Max": 13.61989974975586,
+                    "Median": 13.235092163085938,
+                    "Average": 13.293947492327009,
+                    "StandardDeviation": 0.14941324486586045,
                     "PercentileValue": 0.0,
-                    "Sum": 0.005542107275687158,
+                    "Sum": 93.05763244628906,
+                    "Zeroes": 0,
+                    "SampleCount": 7
+                }
+            ]
+        },
+        {
+            "TestName": "Tests.BenchmarkISearchableQuery.LinearLinqForEach",
+            "TestCategories": [
+                "Uncategorized"
+            ],
+            "TestVersion": "1",
+            "StartTime": 1551050938452.0518,
+            "EndTime": 1551050938592.4297,
+            "SampleGroups": [
+                {
+                    "Definition": {
+                        "Name": "Time",
+                        "SampleUnit": 2,
+                        "AggregationType": 3,
+                        "Threshold": 0.15,
+                        "IncreaseIsBetter": false,
+                        "Percentile": 0.0,
+                        "FailOnBaseline": true
+                    },
+                    "Samples": [
+                        13.42439651489258,
+                        13.774871826171877,
+                        13.886451721191408,
+                        13.438224792480469,
+                        13.323307037353516,
+                        13.539314270019532,
+                        13.28277587890625
+                    ],
+                    "Min": 13.28277587890625,
+                    "Max": 13.886451721191408,
+                    "Median": 13.438224792480469,
+                    "Average": 13.524191720145089,
+                    "StandardDeviation": 0.21053916339287288,
+                    "PercentileValue": 0.0,
+                    "Sum": 94.66934204101564,
+                    "Zeroes": 0,
+                    "SampleCount": 7
+                }
+            ]
+        },
+        {
+            "TestName": "Tests.BenchmarkISearchableQuery.LinearListForEach",
+            "TestCategories": [
+                "Uncategorized"
+            ],
+            "TestVersion": "1",
+            "StartTime": 1551050938602.15,
+            "EndTime": 1551050938736.078,
+            "SampleGroups": [
+                {
+                    "Definition": {
+                        "Name": "Time",
+                        "SampleUnit": 2,
+                        "AggregationType": 3,
+                        "Threshold": 0.15,
+                        "IncreaseIsBetter": false,
+                        "Percentile": 0.0,
+                        "FailOnBaseline": true
+                    },
+                    "Samples": [
+                        13.57412338256836,
+                        13.434886932373049,
+                        13.570308685302737,
+                        13.95559310913086,
+                        13.195991516113282,
+                        13.48257064819336,
+                        13.593196868896485
+                    ],
+                    "Min": 13.195991516113282,
+                    "Max": 13.95559310913086,
+                    "Median": 13.570308685302737,
+                    "Average": 13.543810163225448,
+                    "StandardDeviation": 0.21051557929264229,
+                    "PercentileValue": 0.0,
+                    "Sum": 94.80667114257813,
+                    "Zeroes": 0,
+                    "SampleCount": 7
+                }
+            ]
+        },
+        {
+            "TestName": "Tests.BenchmarkISearchableQuery.LinqParallel",
+            "TestCategories": [
+                "Uncategorized"
+            ],
+            "TestVersion": "1",
+            "StartTime": 1551050938746.1453,
+            "EndTime": 1551050938881.9448,
+            "SampleGroups": [
+                {
+                    "Definition": {
+                        "Name": "Time",
+                        "SampleUnit": 2,
+                        "AggregationType": 3,
+                        "Threshold": 0.15,
+                        "IncreaseIsBetter": false,
+                        "Percentile": 0.0,
+                        "FailOnBaseline": true
+                    },
+                    "Samples": [
+                        3.740787506103516,
+                        3.712177276611328,
+                        3.767490386962891,
+                        3.735065460205078,
+                        3.767013549804688,
+                        3.859043121337891,
+                        3.8695335388183595
+                    ],
+                    "Min": 3.712177276611328,
+                    "Max": 3.8695335388183595,
+                    "Median": 3.767013549804688,
+                    "Average": 3.7787301199776786,
+                    "StandardDeviation": 0.056989440245302867,
+                    "PercentileValue": 0.0,
+                    "Sum": 26.45111083984375,
+                    "Zeroes": 0,
+                    "SampleCount": 7
+                }
+            ]
+        },
+        {
+            "TestName": "Tests.BenchmarkISearchableQuery.SystemParallel",
+            "TestCategories": [
+                "Uncategorized"
+            ],
+            "TestVersion": "1",
+            "StartTime": 1551050938892.278,
+            "EndTime": 1551050938955.5237,
+            "SampleGroups": [
+                {
+                    "Definition": {
+                        "Name": "Time",
+                        "SampleUnit": 2,
+                        "AggregationType": 3,
+                        "Threshold": 0.15,
+                        "IncreaseIsBetter": false,
+                        "Percentile": 0.0,
+                        "FailOnBaseline": true
+                    },
+                    "Samples": [
+                        3.960132598876953,
+                        3.826618194580078,
+                        3.9420127868652345,
+                        3.823280334472656,
+                        3.910064697265625,
+                        3.7446022033691408,
+                        3.7903785705566408
+                    ],
+                    "Min": 3.7446022033691408,
+                    "Max": 3.960132598876953,
+                    "Median": 3.826618194580078,
+                    "Average": 3.856727055140904,
+                    "StandardDeviation": 0.0754137132070501,
+                    "PercentileValue": 0.0,
+                    "Sum": 26.997089385986329,
                     "Zeroes": 0,
                     "SampleCount": 7
                 }

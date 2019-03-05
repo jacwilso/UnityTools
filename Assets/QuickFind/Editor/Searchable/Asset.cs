@@ -3,42 +3,69 @@ using UnityEngine;
 
 namespace QuickFind.Editor.Searchable {
     public class Asset : ISearchable {
+        private string guid;
+
         private string path;
-        private System.Type type;
+        private string Path {
+            get {
+                if (string.IsNullOrEmpty (path)) {
+                    path = AssetDatabase.GUIDToAssetPath (guid);
+                }
+                return path;
+            }
+        }
+
+        private System.Type assetType;
+        public System.Type AssetType {
+            get {
+                if (assetType == null) {
+                    assetType = AssetDatabase.GetMainAssetTypeAtPath (Path);
+                }
+                return assetType;
+            }
+        }
         // private Object mainAsset;
 
-        public string Command => path;
+        public string Command => Path;
 
         private string displayName;
-        public string DisplayName => displayName;
+        public string DisplayName {
+            get {
+                if (string.IsNullOrEmpty (displayName)) {
+                    displayName = System.IO.Path.GetFileNameWithoutExtension (Path);
+                }
+                return displayName;
+            }
+        }
 
-        public string Description => type.Name;
+        public string Description {
+            get {
+                return $"{Path} ({AssetType.Name})";
+            }
+        }
 
         private Texture icon;
         public Texture Icon {
             get {
                 if (icon == null) {
-                    // icon = AssetPreview.GetMiniTypeThumbnail (type);
-
-                    // mainAsset = AssetDatabase.LoadMainAssetAtPath (path);
-                    // icon = AssetPreview.GetMiniThumbnail (mainAsset);
-                    icon = AssetDatabase.GetCachedIcon (path);
-
+                    icon = AssetDatabase.GetCachedIcon (Path);
                 }
                 return icon;
             }
         }
 
-        public Asset (string p) {
-            path = p;
-            displayName = p.Substring (p.LastIndexOf ('/') + 1);
-            type = AssetDatabase.GetMainAssetTypeAtPath (path);
+        public Asset (string g) {
+            guid = g;
         }
 
         public void Execute () {
-            var mainAsset = AssetDatabase.LoadMainAssetAtPath (path);
-            EditorGUIUtility.PingObject (mainAsset);
+            var mainAsset = AssetDatabase.LoadMainAssetAtPath (Path);
             AssetDatabase.OpenAsset (mainAsset);
+            EditorGUIUtility.PingObject (mainAsset);
+        }
+
+        public Object GetMainAsset () {
+            return AssetDatabase.LoadMainAssetAtPath (Path);
         }
     }
 }

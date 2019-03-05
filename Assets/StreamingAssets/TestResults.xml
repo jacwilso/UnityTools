@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2019-02-19 01:23:12Z" end-time="2019-02-19 01:23:13Z" duration="0.1925875">
-  <test-suite type="TestSuite" id="1011" name="QuickFind" fullname="QuickFind" runstate="Runnable" testcasecount="3" result="Passed" start-time="2019-02-19 01:23:12Z" end-time="2019-02-19 01:23:13Z" duration="0.192588" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:59Z" duration="0.8247626">
+  <test-suite type="TestSuite" id="1036" name="QuickFind" fullname="QuickFind" runstate="Runnable" testcasecount="9" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:59Z" duration="0.824763" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
     <properties />
-    <test-suite type="Assembly" id="1015" name="Tests.dll" fullname="C:/Users/j.wilson3355/Documents/Unity/QuickFind/Library/ScriptAssemblies/Tests.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.130826" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <test-suite type="Assembly" id="1047" name="Tests.dll" fullname="C:/Users/j.wilson3355/Documents/Unity/QuickFind/Library/ScriptAssemblies/Tests.dll" runstate="Runnable" testcasecount="8" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:59Z" duration="0.754912" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
       <properties>
-        <property name="_PID" value="18476" />
+        <property name="_PID" value="10252" />
         <property name="_APPDOMAIN" value="Unity Child Domain" />
       </properties>
-      <test-suite type="TestSuite" id="1016" name="Tests" fullname="Tests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.120160" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <test-suite type="TestSuite" id="1048" name="Tests" fullname="Tests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.716643" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
         <properties />
-        <test-suite type="TestFixture" id="1012" name="BenchmarkGetAllAssetPaths" fullname="Tests.BenchmarkGetAllAssetPaths" classname="Tests.BenchmarkGetAllAssetPaths" runstate="Runnable" testcasecount="2" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.105298" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-suite type="TestFixture" id="1041" name="BenchmarkISearchableQuery" fullname="Tests.BenchmarkISearchableQuery" classname="Tests.BenchmarkISearchableQuery" runstate="Runnable" testcasecount="5" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.679344" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
           <properties />
-          <test-case id="1014" name="NewList_Performance" fullname="Tests.BenchmarkGetAllAssetPaths.NewList_Performance" methodname="NewList_Performance" classname="Tests.BenchmarkGetAllAssetPaths" runstate="Runnable" seed="469629927" result="Passed" start-time="2019-02-19 01:23:13Z" end-time="2019-02-19 01:23:13Z" duration="0.076779" asserts="0">
+          <test-case id="1042" name="LinearForEach" fullname="Tests.BenchmarkISearchableQuery.LinearForEach" methodname="LinearForEach" classname="Tests.BenchmarkISearchableQuery" runstate="Runnable" seed="1327293219" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.141258" asserts="0">
             <properties />
-            <output><![CDATA[Time Millisecond Median:0.00 Min:0.00 Max:0.00 Avg:0.00 Std:0.00 Zeroes:0 SampleCount: 7 Sum: 0.01
+            <output><![CDATA[Time Millisecond Median:13.24 Min:13.17 Max:13.62 Avg:13.29 Std:0.15 Zeroes:0 SampleCount: 7 Sum: 93.06
 
-##performancetestresult:{"TestName":"Tests.BenchmarkGetAllAssetPaths.NewList_Performance","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1550539393047.0586,"EndTime":1550539393106.0222,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[0.000719754199963063,0.000791729602497071,0.000719754199963063,0.000791729602497071,0.000935680465772748,0.000791729602497071,0.000791729602497071],"Min":0.000719754199963063,"Max":0.000935680465772748,"Median":0.000791729602497071,"Average":0.0007917296108124512,"StandardDeviation":0.0000666362923184797,"PercentileValue":0.0,"Sum":0.005542107275687158,"Zeroes":0,"SampleCount":7}]}
+##performancetestresult:{"TestName":"Tests.BenchmarkISearchableQuery.LinearForEach","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1551050938312.1016,"EndTime":1551050938445.4893,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[13.265132904052735,13.386249542236329,13.61989974975586,13.235092163085938,13.20505142211914,13.180255889892579,13.165950775146485],"Min":13.165950775146485,"Max":13.61989974975586,"Median":13.235092163085938,"Average":13.293947492327009,"StandardDeviation":0.14941324486586045,"PercentileValue":0.0,"Sum":93.05763244628906,"Zeroes":0,"SampleCount":7}]}
+]]></output>
+          </test-case>
+          <test-case id="1043" name="LinearLinqForEach" fullname="Tests.BenchmarkISearchableQuery.LinearLinqForEach" methodname="LinearLinqForEach" classname="Tests.BenchmarkISearchableQuery" runstate="Runnable" seed="1606674633" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.143088" asserts="0">
+            <properties />
+            <output><![CDATA[Time Millisecond Median:13.44 Min:13.28 Max:13.89 Avg:13.52 Std:0.21 Zeroes:0 SampleCount: 7 Sum: 94.67
+
+##performancetestresult:{"TestName":"Tests.BenchmarkISearchableQuery.LinearLinqForEach","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1551050938452.0518,"EndTime":1551050938592.4297,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[13.424396514892579,13.774871826171875,13.886451721191407,13.438224792480469,13.323307037353516,13.539314270019532,13.28277587890625],"Min":13.28277587890625,"Max":13.886451721191407,"Median":13.438224792480469,"Average":13.524191720145089,"StandardDeviation":0.21053916339287286,"PercentileValue":0.0,"Sum":94.66934204101563,"Zeroes":0,"SampleCount":7}]}
+]]></output>
+          </test-case>
+          <test-case id="1044" name="LinearListForEach" fullname="Tests.BenchmarkISearchableQuery.LinearListForEach" methodname="LinearListForEach" classname="Tests.BenchmarkISearchableQuery" runstate="Runnable" seed="1909225020" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.145792" asserts="0">
+            <properties />
+            <output><![CDATA[Time Millisecond Median:13.57 Min:13.20 Max:13.96 Avg:13.54 Std:0.21 Zeroes:0 SampleCount: 7 Sum: 94.81
+
+##performancetestresult:{"TestName":"Tests.BenchmarkISearchableQuery.LinearListForEach","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1551050938602.1501,"EndTime":1551050938736.078,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[13.57412338256836,13.434886932373047,13.570308685302735,13.95559310913086,13.195991516113282,13.48257064819336,13.593196868896485],"Min":13.195991516113282,"Max":13.95559310913086,"Median":13.570308685302735,"Average":13.543810163225447,"StandardDeviation":0.21051557929264229,"PercentileValue":0.0,"Sum":94.80667114257813,"Zeroes":0,"SampleCount":7}]}
+]]></output>
+          </test-case>
+          <test-case id="1046" name="LinqParallel" fullname="Tests.BenchmarkISearchableQuery.LinqParallel" methodname="LinqParallel" classname="Tests.BenchmarkISearchableQuery" runstate="Runnable" seed="266451558" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.144780" asserts="0">
+            <properties />
+            <output><![CDATA[Time Millisecond Median:3.77 Min:3.71 Max:3.87 Avg:3.78 Std:0.06 Zeroes:0 SampleCount: 7 Sum: 26.45
+
+##performancetestresult:{"TestName":"Tests.BenchmarkISearchableQuery.LinqParallel","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1551050938746.1453,"EndTime":1551050938881.9448,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[3.7407875061035158,3.712177276611328,3.7674903869628908,3.735065460205078,3.7670135498046877,3.8590431213378908,3.8695335388183595],"Min":3.712177276611328,"Max":3.8695335388183595,"Median":3.7670135498046877,"Average":3.7787301199776786,"StandardDeviation":0.056989440245302867,"PercentileValue":0.0,"Sum":26.45111083984375,"Zeroes":0,"SampleCount":7}]}
+]]></output>
+          </test-case>
+          <test-case id="1045" name="SystemParallel" fullname="Tests.BenchmarkISearchableQuery.SystemParallel" methodname="SystemParallel" classname="Tests.BenchmarkISearchableQuery" runstate="Runnable" seed="2073084380" result="Passed" start-time="2019-02-24 23:28:58Z" end-time="2019-02-24 23:28:58Z" duration="0.071071" asserts="0">
+            <properties />
+            <output><![CDATA[Time Millisecond Median:3.83 Min:3.74 Max:3.96 Avg:3.86 Std:0.08 Zeroes:0 SampleCount: 7 Sum: 27.00
+
+##performancetestresult:{"TestName":"Tests.BenchmarkISearchableQuery.SystemParallel","TestCategories":["Uncategorized"],"TestVersion":"1","StartTime":1551050938892.278,"EndTime":1551050938955.5237,"SampleGroups":[{"Definition":{"Name":"Time","SampleUnit":2,"AggregationType":3,"Threshold":0.15,"IncreaseIsBetter":false,"Percentile":0.0,"FailOnBaseline":true},"Samples":[3.960132598876953,3.826618194580078,3.9420127868652345,3.8232803344726564,3.910064697265625,3.7446022033691408,3.7903785705566408],"Min":3.7446022033691408,"Max":3.960132598876953,"Median":3.826618194580078,"Average":3.856727055140904,"StandardDeviation":0.0754137132070501,"PercentileValue":0.0,"Sum":26.997089385986329,"Zeroes":0,"SampleCount":7}]}
 ]]></output>
           </test-case>
         </test-suite>

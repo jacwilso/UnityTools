@@ -18,21 +18,21 @@ MonoBehaviour:
 
     - Static the window
 
-    - Categories (implement dictionary mapping file endings - json file? setings mapping?)
+    x Categories (implement dictionary mapping file endings - json file? setings mapping?)
 
     x Labels/Tags
 
-    - Custom functions/commands
+    - Custom functions/commands (use menuitems)
 
     - TrieTree integration
 
-    - Dictionary Add already contains string
+    x Dictionary Add already contains string
 
     - History
 
-    - AssetDatabase.OpenAsset()
+    x AssetDatabase.OpenAsset()
 
-    - Clamp searchField (rename to selectedResult)
+    x Clamp searchField (rename to selectedResult)
 
     - Search outside project (Add to settings)
 
@@ -40,18 +40,25 @@ MonoBehaviour:
 
     - Break editor window into utility file
 
-    - Search field focus
+    x Search field focus
 
     - Cache gui styles
 
     - File extension search
 
-    - Hierarchy search
+    x Hierarchy search
 
     - Different actions
 
     - Autocomplete search
 
-    - Drag objects into scene
+    x Drag objects into scene
 
     - Have last command in field (maybe?) (fullyselected)'
+  m_todo:
+  - Benchmark test GetAllAssetPaths
+  - 
+  - 
+  - 
+  - 
+  m_done: []
